@@ -19,7 +19,6 @@ export default function CheckoutView({ shoppingCart, totalCost, discount }) {
     }
   };
 
-
   const validateCardNumber = (event) => {
     const cardNumber = event.target.value;
     const regex = /^\d{4}\s\d{4}\s\d{4}\s\d{4}$/;
@@ -62,6 +61,18 @@ export default function CheckoutView({ shoppingCart, totalCost, discount }) {
     }
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const form = event.target;
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+      alert("Please correct the errors in the form before submitting.");
+    } else {
+      alert("Payment processed successfully!");
+    }
+    form.classList.add("was-validated");
+  };
+
   return (
       <>
         <div className="bg-secondary border-top p-4 text-white mb-3">
@@ -75,111 +86,119 @@ export default function CheckoutView({ shoppingCart, totalCost, discount }) {
                   <IconCreditCard2Front className="i-va" /> Payment Method
                 </div>
                 <div className="card-body">
-                  <div className="row g-3 mb-3 border-bottom">
-                    <div className="col-md-6">
-                      <div className="form-check">
-                        <input
-                            id="credit"
-                            name="paymentMethod"
-                            type="radio"
-                            className="form-check-input"
-                            defaultChecked
-                            required
-                        />
-                        <label className="form-check-label" htmlFor="credit">
-                          Credit card
-                          <img
-                              src="../../images/payment/cards.webp"
-                              alt="..."
-                              className="ml-3"
-                              height={26}
+                  <form className="needs-validation" noValidate onSubmit={handleSubmit}>
+                    <div className="row g-3 mb-3 border-bottom">
+                      <div className="col-md-6">
+                        <div className="form-check">
+                          <input
+                              id="credit"
+                              name="paymentMethod"
+                              type="radio"
+                              className="form-check-input"
+                              defaultChecked
+                              required
                           />
-                        </label>
+                          <label className="form-check-label" htmlFor="credit">
+                            Credit card
+                            <img src="../../images/payment/cards.webp" alt="..." className="ml-3" height={26} />
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="form-check">
+                          <input
+                              id="paypal"
+                              name="paymentMethod"
+                              type="radio"
+                              className="form-check-input"
+                              required
+                          />
+                          <label className="form-check-label" htmlFor="paypal">
+                            PayPal
+                            <img src="../../images/payment/paypal_64.webp" alt="..." className="ml-3" height={26} />
+                          </label>
+                        </div>
                       </div>
                     </div>
-                    <div className="col-md-6">
-                      <div className="form-check">
+                    <div className="row g-3">
+                      <div className="col-md-6">
                         <input
-                            id="paypal"
-                            name="paymentMethod"
-                            type="radio"
-                            className="form-check-input"
+                            type="text"
+                            className="form-control"
+                            placeholder="Name on card"
                             required
+                            maxLength={40}
+                            minLength={3}
+                            pattern="[a-zA-Z\s]{3,40}"
+                            onInput={validateName}
                         />
-                        <label className="form-check-label" htmlFor="paypal">
-                          PayPal
-                          <img
-                              src="../../images/payment/paypal_64.webp"
-                              alt="..."
-                              className="ml-3"
-                              height={26}
-                          />
-                        </label>
+                        <div className="invalid-feedback">
+                          Name should only contain letters and spaces, with a minimum of 3 characters and a maximum of 40 characters.
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Card number"
+                            required
+                            maxLength={19}
+                            pattern="\d{4}\s\d{4}\s\d{4}\s\d{4}"
+                            onInput={validateCardNumber}
+                        />
+                        <div className="invalid-feedback">
+                          Card number should be in the format xxxx xxxx xxxx xxxx with numbers only.
+                        </div>
+                      </div>
+                      <div className="col-md-4">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="MM"
+                            required
+                            maxLength="2"
+                            onInput={validateExpirationMonth}
+                        />
+                        <div className="invalid-feedback">
+                          Expiration month should be a valid two-digit month (01-12).
+                        </div>
+                      </div>
+                      <div className="col-md-4">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="YY"
+                            required
+                            maxLength="2"
+                            onInput={validateExpirationYear}
+                        />
+                        <div className="invalid-feedback">
+                          Expiration year should be a valid two-digit year.
+                        </div>
+                      </div>
+                      <div className="col-md-4">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="CVV"
+                            required
+                            maxLength="3"
+                            onInput={validateCVV}
+                        />
+                        <div className="invalid-feedback">
+                          CVV should be exactly 3 digits.
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Name on card"
-                          required
-                          maxLength={40}
-                          minLength={3}
-                          pattern="[a-zA-Z\s]{3,40}"
-                          onInput={validateName}
-                      />
+                    <div className="card-footer border-info">
+                      <button type="submit" className="btn btn-block btn-info">
+                        Pay Now <strong>${discountedTotalCost.toFixed(2)}</strong>
+                      </button>
                     </div>
-                    <div className="col-md-6">
-                      <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Card number"
-                          required
-                          maxLength={19}
-                          pattern="\d{4}\s\d{4}\s\d{4}\s\d{4}"
-                          onInput={validateCardNumber}
-                      />
-                    </div>
-                    <div className="col-md-4">
-                      <input type="text"
-                             className="form-control"
-                             placeholder="MM" required
-                             maxLength="2"
-                             onInput={validateExpirationMonth}
-                      />
-
-                    </div>
-                    <div className="col-md-4">
-                      <input type="text"
-                             className="form-control"
-                             placeholder="YY"
-                             required maxLength="2"
-                             onInput={validateExpirationYear}
-                      />
-
-                    </div>
-                    <div className="col-md-4">
-                      <input type="text"
-                             className="form-control"
-                             placeholder="CVV"
-                             required maxLength="3"
-                             onInput={validateCVV}/>
-
-                    </div>
-                  </div>
-                </div>
-                <div className="card-footer border-info">
-                  <button type="button" className="btn btn-block btn-info">
-                    Pay Now <strong>${discountedTotalCost.toFixed(2)}</strong>
-                  </button>
+                  </form>
                 </div>
               </div>
             </div>
-
-
-
             <div className="col-md-4">
               <div className="card">
                 <div className="card-header">
@@ -188,19 +207,12 @@ export default function CheckoutView({ shoppingCart, totalCost, discount }) {
                 </div>
                 <ul className="list-group list-group-flush">
                   {products.map((wrapper, index) => (
-                      <li
-                          key={wrapper.product._id}
-                          className="list-group-item d-flex justify-content-between lh-sm"
-                      >
+                      <li key={wrapper.product._id} className="list-group-item d-flex justify-content-between lh-sm">
                         <div>
                           <h6 className="my-0">{wrapper.product.name}</h6>
-                          <small className="text-muted">
-                            {wrapper.product.name}
-                          </small>
+                          <small className="text-muted">{wrapper.product.name}</small>
                         </div>
-                        <span className="text-muted">
-                      ${wrapper.product.price.toFixed(2)}
-                    </span>
+                        <span className="text-muted">${wrapper.product.price.toFixed(2)}</span>
                       </li>
                   ))}
                   <li className="list-group-item d-flex justify-content-between bg-light">

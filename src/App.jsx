@@ -55,8 +55,14 @@ const App = () => {
 
           <Route path="product/detail/:id" element={<ProductDetail allproducts={products} shoppingCart={shoppingCart} updateCount={setCount} />} />
 
-          <Route path="cart" element={<CartView shoppingCart={shoppingCart} updateCount={setCount} />} />
-          <Route path="checkout" element={<CheckoutView shoppingCart={shoppingCart} count={count} />} />
+
+
+            <Route path="cart" element={<CartView shoppingCart={shoppingCart} setShoppingCart={setShoppingCart} updateCount={setCount} />} />
+
+
+
+
+            <Route path="checkout" element={<CheckoutView shoppingCart={shoppingCart} count={count} />} />
 
           <Route path="support" element={<SupportView />} />
           <Route path="return" element={<ReturnPolicy />} />

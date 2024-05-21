@@ -39,6 +39,15 @@ const App = () => {
   const [shoppingCart, setShoppingCart] = useState(new ShoppingCart(new Map()));
   const [searchData, setSearchData] = useState([]);
 
+    const getTotalCost = (shoppingCart) => {
+        let totalCost = 0;
+        shoppingCart.products.forEach(item => {
+            const productCost = item.product.price * item.count;
+            totalCost += productCost;
+        });
+        return totalCost;
+    };
+
   return (
 
     <BrowserRouter>
@@ -62,9 +71,10 @@ const App = () => {
 
 
 
-            <Route path="checkout" element={<CheckoutView shoppingCart={shoppingCart} count={count} />} />
+            <Route path="checkout" element={<CheckoutView shoppingCart={shoppingCart} count={count} totalCost={getTotalCost(shoppingCart)} />} />
 
-          <Route path="support" element={<SupportView />} />
+
+            <Route path="support" element={<SupportView />} />
           <Route path="return" element={<ReturnPolicy />} />
           <Route path="privacy" element={<Privacy />} />
           <Route path="term" element={<TermUse />} />

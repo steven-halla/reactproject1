@@ -2,8 +2,10 @@ import React from "react";
 import { ReactComponent as IconCreditCard2Front } from "bootstrap-icons/icons/credit-card-2-front.svg";
 import { ReactComponent as IconCart3 } from "bootstrap-icons/icons/cart3.svg";
 
-export default function CheckoutView({ shoppingCart, count, totalCost }) {
+export default function CheckoutView({ shoppingCart, totalCost, discount }) {
   const products = Array.from(shoppingCart.products.values());
+  const count = products.reduce((acc, item) => acc + item.count, 0);
+  const discountedTotalCost = totalCost - discount;
 
   return (
       <>
@@ -101,7 +103,7 @@ export default function CheckoutView({ shoppingCart, count, totalCost }) {
                 </div>
                 <div className="card-footer border-info">
                   <button type="button" className="btn btn-block btn-info">
-                    Pay Now <strong>${totalCost}</strong>
+                    Pay Now <strong>${discountedTotalCost.toFixed(2)}</strong>
                   </button>
                 </div>
               </div>
@@ -119,19 +121,20 @@ export default function CheckoutView({ shoppingCart, count, totalCost }) {
                           <h6 className="my-0">{wrapper.product.name}</h6>
                           <small className="text-muted">{wrapper.product.name}</small>
                         </div>
-                        <span className="text-muted">${(wrapper.product.price * wrapper.count).toFixed(2)}</span>
+                        <span className="text-muted">${wrapper.product.price}</span>
                       </li>
                   ))}
+
                   <li className="list-group-item d-flex justify-content-between bg-light">
                     <div className="text-success">
                       <h6 className="my-0">Promo code</h6>
                       <small></small>
                     </div>
-                    <span className="text-success">−$0.00</span>
+                    <span className="text-success">−${discount.toFixed(2)}</span>
                   </li>
                   <li className="list-group-item d-flex justify-content-between">
                     <span>Total (USD)</span>
-                    <strong>${totalCost}</strong>
+                    <strong>${discountedTotalCost.toFixed(2)}</strong>
                   </li>
                 </ul>
               </div>

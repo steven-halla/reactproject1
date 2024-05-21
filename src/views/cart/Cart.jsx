@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, { lazy, useState } from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as IconHeartFill } from "bootstrap-icons/icons/heart-fill.svg";
 import { ReactComponent as IconTrash } from "bootstrap-icons/icons/trash.svg";
@@ -245,7 +245,7 @@ export default function CartView({ shoppingCart, setShoppingCart, updateCount, d
             <div className="col-md-3">
               <div className="card mb-3">
                 <div className="card-body">
-                  <CouponApplyForm onSubmit={handleCouponSubmit} />
+                  <CouponApplyForm onSubmit={(values, dispatch) => handleCouponSubmit(values, dispatch, setDiscount)} />
                 </div>
               </div>
               <div className="card">
@@ -257,7 +257,7 @@ export default function CartView({ shoppingCart, setShoppingCart, updateCount, d
                     <dt className="col-6 text-success">Discount:</dt>
                     <dd className="col-6 text-success text-right">-${discount.toFixed(2)}</dd>
                     <dt className="col-6 text-success">Coupon:</dt>
-                    <dd className="col-6 text-success text-right">-$1.00</dd>
+                    <dd className="col-6 text-success text-right">-${discount.toFixed(2)}</dd>
                   </dl>
                   <dl className="row">
                     <dt className="col-6">Total:</dt>

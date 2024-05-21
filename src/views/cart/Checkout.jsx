@@ -116,15 +116,21 @@ export default function CheckoutView({ shoppingCart, totalCost, discount }) {
                 </div>
                 <ul className="list-group list-group-flush">
                   {products.map((wrapper, index) => (
-                      <li key={wrapper.product._id} className="list-group-item d-flex justify-content-between lh-sm">
+                      <li
+                          key={wrapper.product._id}
+                          className="list-group-item d-flex justify-content-between lh-sm"
+                      >
                         <div>
                           <h6 className="my-0">{wrapper.product.name}</h6>
-                          <small className="text-muted">{wrapper.product.name}</small>
+                          <small className="text-muted">
+                            {wrapper.product.name}
+                          </small>
                         </div>
-                        <span className="text-muted">${wrapper.product.price}</span>
+                        <span className="text-muted">
+                      ${wrapper.product.price.toFixed(2)}
+                    </span>
                       </li>
                   ))}
-
                   <li className="list-group-item d-flex justify-content-between bg-light">
                     <div className="text-success">
                       <h6 className="my-0">Promo code</h6>

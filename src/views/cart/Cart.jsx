@@ -1,4 +1,4 @@
-import React, {lazy, useState} from "react";
+import React, { lazy } from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as IconHeartFill } from "bootstrap-icons/icons/heart-fill.svg";
 import { ReactComponent as IconTrash } from "bootstrap-icons/icons/trash.svg";
@@ -7,25 +7,24 @@ import { ReactComponent as IconChevronLeft } from "bootstrap-icons/icons/chevron
 import { ReactComponent as IconTruck } from "bootstrap-icons/icons/truck.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-import {ShoppingCart} from "../../models/Shoppingcart";
+import { ShoppingCart } from "../../models/Shoppingcart";
 
 const CouponApplyForm = lazy(() =>
-  import("../../components/others/CouponApplyForm")
+    import("../../components/others/CouponApplyForm")
 );
 
 const discountAmount = 1;
 
-const onSubmitApplyCouponCode = (values, dispatch, props) => {
+const onSubmitApplyCouponCode = (values, dispatch, setDiscount) => {
   const { coupon } = values;
 
   if (coupon && coupon.trim() !== "") {
     alert("Coupon applied! You get a $1 discount.");
-    props.setDiscount(discountAmount);
+    setDiscount(discountAmount);
   } else {
     alert("Invalid coupon code. Please try again.");
   }
 };
-
 
 const removeProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCount) => {
   console.log("Remove product pushed");
@@ -55,7 +54,6 @@ const removeProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updat
   console.log("New total count: ", totalCount);
   updateCount(totalCount);
 };
-
 
 const addProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCount) => {
   console.log("Add product pushed");
@@ -87,9 +85,6 @@ const addProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCo
   updateCount(totalCount);
 };
 
-
-
-
 const removeAllProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCount) => {
   console.log("Remove all product pushed");
 
@@ -110,15 +105,6 @@ const removeAllProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, up
   updateCount(totalCount);
 };
 
-
-const getNewCount = (shoppingCart, updateCount) => {
-  //Start here
-  console.log("get new count pusshed")
-
-
-  //End here
-}
-
 const getTotalCost = (shoppingCart) => {
   console.log("get total cost pushed");
 
@@ -132,7 +118,6 @@ const getTotalCost = (shoppingCart) => {
   console.log("Total cost calculated:", totalCost);
   return totalCost;
 };
-
 
 const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
   const products = Array.from(shoppingCart.products.values());
@@ -175,7 +160,7 @@ const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
                         <button
                             className="btn btn-primary text-white"
                             type="button"
-                            onClick={() => removeProduct(shoppingCart, wrapper, updateCount)}
+                            onClick={() => removeProduct(shoppingCart, wrapper, setShoppingCart, updateCount)}
                         >
                           <FontAwesomeIcon icon={faMinus} />
                         </button>
@@ -188,7 +173,7 @@ const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
                         <button
                             className="btn btn-primary text-white"
                             type="button"
-                            onClick={() => addProduct(shoppingCart, wrapper, updateCount)}
+                            onClick={() => addProduct(shoppingCart, wrapper, setShoppingCart, updateCount)}
                         >
                           <FontAwesomeIcon icon={faPlus} />
                         </button>
@@ -227,10 +212,7 @@ const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
   );
 };
 
-
-export default function CartView({ shoppingCart, setShoppingCart, updateCount }) {
-  const [discount, setDiscount] = useState(0);
-
+export default function CartView({ shoppingCart, setShoppingCart, updateCount, discount, setDiscount }) {
   const totalCost = getTotalCost(shoppingCart);
   const discountedTotal = totalCost - discount;
 
@@ -318,4 +300,3 @@ export default function CartView({ shoppingCart, setShoppingCart, updateCount })
       </>
   );
 }
-

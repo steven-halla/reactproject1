@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, {lazy, useState} from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as IconHeartFill } from "bootstrap-icons/icons/heart-fill.svg";
 import { ReactComponent as IconTrash } from "bootstrap-icons/icons/trash.svg";
@@ -13,37 +13,41 @@ const CouponApplyForm = lazy(() =>
   import("../../components/others/CouponApplyForm")
 );
 
-const onSubmitApplyCouponCode = async values => {
-  alert(JSON.stringify(values));
+const discountAmount = 1;
+
+const onSubmitApplyCouponCode = (values, dispatch, props) => {
+  const { coupon } = values;
+
+  if (coupon && coupon.trim() !== "") {
+    alert("Coupon applied! You get a $1 discount.");
+    props.setDiscount(discountAmount);
+  } else {
+    alert("Invalid coupon code. Please try again.");
+  }
 };
+
 
 const removeProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCount) => {
   console.log("Remove product pushed");
 
-  // Clone the current shopping cart
   const updatedCart = new ShoppingCart(new Map(shoppingCart.products));
   console.log("Cloned shopping cart:", updatedCart);
 
-  // Find the product in the cart
   const cartProduct = updatedCart.products.get(shoppingCartProduct.product._id);
 
   if (cartProduct) {
-    // Decrement the quantity if the product is in the cart
     cartProduct.count -= 1;
     console.log("Decremented count for product:", cartProduct);
 
-    // If the count reaches zero, remove the product from the cart
     if (cartProduct.count <= 0) {
       updatedCart.products.delete(shoppingCartProduct.product._id);
       console.log("Removed product from cart:", shoppingCartProduct.product);
     }
   }
 
-  // Update the shopping cart state
   setShoppingCart(updatedCart);
   console.log("Updated shopping cart state:", updatedCart);
 
-  // Calculate the new total count and update it
   let totalCount = 0;
   updatedCart.products.forEach(item => {
     totalCount += item.count;
@@ -85,22 +89,27 @@ const addProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCo
 
 
 
-//
-// const removeProduct = (shoppingCart, shoppingCartproduct, updateCount) => {
-//   //Start here
-//   console.log("Remove product pusshed")
-//
-//
-//   //End here
-// }
 
-const removeAllProduct = (shoppingCart, shoppingCartproduct, updateCount) => {
-  //Start here
-  console.log("remove all product pusshed")
+const removeAllProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCount) => {
+  console.log("Remove all product pushed");
 
+  const updatedCart = new ShoppingCart(new Map(shoppingCart.products));
+  console.log("Cloned shopping cart:", updatedCart);
 
-  //End here
-}
+  updatedCart.products.delete(shoppingCartProduct.product._id);
+  console.log("Removed product from cart:", shoppingCartProduct.product);
+
+  setShoppingCart(updatedCart);
+  console.log("Updated shopping cart state:", updatedCart);
+
+  let totalCount = 0;
+  updatedCart.products.forEach(item => {
+    totalCount += item.count;
+  });
+  console.log("New total count: ", totalCount);
+  updateCount(totalCount);
+};
+
 
 const getNewCount = (shoppingCart, updateCount) => {
   //Start here
@@ -111,18 +120,25 @@ const getNewCount = (shoppingCart, updateCount) => {
 }
 
 const getTotalCost = (shoppingCart) => {
-  //Start here
-  console.log("get total cost pusshed")
+  console.log("get total cost pushed");
 
+  let totalCost = 0;
 
-  //End here
-}
+  shoppingCart.products.forEach(item => {
+    const productCost = item.product.price * item.count;
+    totalCost += productCost;
+  });
+
+  console.log("Total cost calculated:", totalCost);
+  return totalCost;
+};
+
 
 const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
   const products = Array.from(shoppingCart.products.values());
 
-  const handleAddProduct = (product) => {
-    addProduct(shoppingCart, { product }, setShoppingCart, updateCount);
+  const handleRemoveAllProduct = (product) => {
+    removeAllProduct(shoppingCart, { product }, setShoppingCart, updateCount);
   };
 
   return (
@@ -172,7 +188,7 @@ const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
                         <button
                             className="btn btn-primary text-white"
                             type="button"
-                            onClick={() => handleAddProduct(wrapper.product)}
+                            onClick={() => addProduct(shoppingCart, wrapper, updateCount)}
                         >
                           <FontAwesomeIcon icon={faPlus} />
                         </button>
@@ -188,7 +204,7 @@ const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
                       </button>
                       <button
                           className="btn btn-sm btn-outline-danger"
-                          onClick={() => removeAllProduct(shoppingCart, wrapper, updateCount)}
+                          onClick={() => handleRemoveAllProduct(wrapper.product)}
                       >
                         <IconTrash className="i-va" />
                       </button>
@@ -211,116 +227,24 @@ const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
   );
 };
 
-// const ProductList = ({ shoppingCart, setShoppingCart, updateCount }) => {
-//   const products = Array.from(shoppingCart.products.values());
-//   return (
-//     <>
-//
-//       <div className="card" >
-//         <div className="table-responsive">
-//           <table className="table table-borderless">
-//             <thead className="text-muted">
-//               <tr className="small text-uppercase">
-//                 <th scope="col">Product</th>
-//                 <th scope="col" width={120}>
-//                   Quantity
-//                 </th>
-//                 <th scope="col" width={150}>
-//                   Price
-//                 </th>
-//                 <th scope="col" className="text-right" width={130}></th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {
-//                 products.map((wrapper, index) => (
-//
-//                   <tr key={wrapper.product._id}>
-//                     <td>
-//                       <div className="row">
-//                         <div className="col-3 d-none d-md-block">
-//                           <img
-//                             src={"../../" + wrapper.product.image}
-//                             width="80"
-//                             alt="..."
-//                           />
-//                         </div>
-//                         <div className="col">
-//                           <Link
-//                             to="/product/detail"
-//                             className="text-decoration-none"
-//                           >
-//                             {wrapper.product.name}
-//                           </Link>
-//                           <p className="small text-muted">
-//                             {wrapper.product.name}
-//                           </p>
-//                         </div>
-//                       </div>
-//                     </td>
-//                     <td>
-//                       <div className="input-group input-group-sm mw-140">
-//                         <button
-//                           className="btn btn-primary text-white"
-//                           type="button"
-//                           onClick={(e) => removeProduct(shoppingCart, wrapper, updateCount)}
-//                         >
-//                           <FontAwesomeIcon icon={faMinus} />
-//                         </button>
-//                         <input
-//                           type="text"
-//                           className="form-control"
-//                           defaultValue={wrapper.count}
-//                         />
-//                         <button
-//                           className="btn btn-primary text-white"
-//                           type="button"
-//                           onClick={(e) => addProduct(shoppingCart, wrapper, updateCount)}
-//                         >
-//                           <FontAwesomeIcon icon={faPlus} />
-//                         </button>
-//                       </div>
-//                     </td>
-//                     <td>
-//                       <var className="price">${(wrapper.product.price * wrapper.count).toFixed(2)}</var>
-//                       <small className="d-block text-muted">
-//                         ${wrapper.product.price} each
-//                       </small>
-//                     </td>
-//                     <td className="text-right">
-//                       <button className="btn btn-sm btn-outline-secondary mr-2">
-//                         <IconHeartFill className="i-va" />
-//                       </button>
-//                       <button className="btn btn-sm btn-outline-danger"
-//                         onClick={(e) => removeAllProduct(shoppingCart, wrapper, updateCount)}
-//                       >
-//
-//                         <IconTrash className="i-va" />
-//                       </button>
-//                     </td>
-//                   </tr>
-//
-//                 ))
-//               }
-//
-//
-//             </tbody>
-//           </table>
-//         </div>
-//         <div className="card-footer">
-//           <Link to="/checkout" className="btn btn-primary float-right">
-//             Make Purchase <IconChevronRight className="i-va" />
-//           </Link>
-//           <Link to="/" className="btn btn-secondary">
-//             <IconChevronLeft className="i-va" /> Continue shopping
-//           </Link>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }
 
 export default function CartView({ shoppingCart, setShoppingCart, updateCount }) {
+  const [discount, setDiscount] = useState(0);
+
+  const totalCost = getTotalCost(shoppingCart);
+  const discountedTotal = totalCost - discount;
+
+  const handleCouponSubmit = (values, dispatch) => {
+    const { coupon } = values;
+
+    if (coupon && coupon.trim() !== "") {
+      alert("Coupon applied! You get a $1 discount.");
+      setDiscount(1);
+    } else {
+      alert("Invalid coupon code. Please try again.");
+    }
+  };
+
   return (
       <>
         <div className="bg-secondary border-top p-4 text-white mb-3">
@@ -339,24 +263,24 @@ export default function CartView({ shoppingCart, setShoppingCart, updateCount })
             <div className="col-md-3">
               <div className="card mb-3">
                 <div className="card-body">
-                  <CouponApplyForm onSubmit={onSubmitApplyCouponCode} />
+                  <CouponApplyForm onSubmit={handleCouponSubmit} />
                 </div>
               </div>
               <div className="card">
                 <div className="card-body">
                   <dl className="row border-bottom">
                     <dt className="col-6">Total price:</dt>
-                    <dd className="col-6 text-right">${getTotalCost(shoppingCart)}</dd>
+                    <dd className="col-6 text-right">${totalCost.toFixed(2)}</dd>
 
                     <dt className="col-6 text-success">Discount:</dt>
-                    <dd className="col-6 text-success text-right">-$0.00</dd>
+                    <dd className="col-6 text-success text-right">-${discount.toFixed(2)}</dd>
                     <dt className="col-6 text-success">Coupon:</dt>
-                    <dd className="col-6 text-success text-right">-$0.00</dd>
+                    <dd className="col-6 text-success text-right">-$1.00</dd>
                   </dl>
                   <dl className="row">
                     <dt className="col-6">Total:</dt>
                     <dd className="col-6 text-right h5">
-                      <strong>${getTotalCost(shoppingCart)}</strong>
+                      <strong>${discountedTotal.toFixed(2)}</strong>
                     </dd>
                   </dl>
                   <hr />
@@ -368,29 +292,30 @@ export default function CartView({ shoppingCart, setShoppingCart, updateCount })
             </div>
           </div>
         </div>
-      <div className="bg-light border-top p-4">
-        <div className="container">
-          <h6>Payment and refund policy</h6>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
+        <div className="bg-light border-top p-4">
+          <div className="container">
+            <h6>Payment and refund policy</h6>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+              pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+              culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+              pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+              culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+          </div>
         </div>
-      </div>
-    </>
+      </>
   );
 }
+

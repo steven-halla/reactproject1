@@ -7,6 +7,61 @@ export default function CheckoutView({ shoppingCart, totalCost, discount }) {
   const count = products.reduce((acc, item) => acc + item.count, 0);
   const discountedTotalCost = totalCost - discount;
 
+  const validateName = (event) => {
+    const name = event.target.value;
+    const regex = /^[a-zA-Z\s]{3,40}$/;
+    if (!regex.test(name)) {
+      event.target.setCustomValidity(
+          "Name should only contain letters and spaces, with a minimum of 3 characters and a maximum of 40 characters."
+      );
+    } else {
+      event.target.setCustomValidity("");
+    }
+  };
+
+
+  const validateCardNumber = (event) => {
+    const cardNumber = event.target.value;
+    const regex = /^\d{4}\s\d{4}\s\d{4}\s\d{4}$/;
+    if (!regex.test(cardNumber)) {
+      event.target.setCustomValidity(
+          "Card number should be in the format xxxx xxxx xxxx xxxx with numbers only."
+      );
+    } else {
+      event.target.setCustomValidity("");
+    }
+  };
+
+  const validateExpirationMonth = (event) => {
+    const month = event.target.value;
+    const regex = /^(0[1-9]|1[0-2])$/;
+    if (!regex.test(month)) {
+      event.target.setCustomValidity("Expiration month should be a valid two-digit month (01-12).");
+    } else {
+      event.target.setCustomValidity("");
+    }
+  };
+
+  const validateExpirationYear = (event) => {
+    const year = event.target.value;
+    const regex = /^\d{2}$/;
+    if (!regex.test(year)) {
+      event.target.setCustomValidity("Expiration year should be a valid two-digit year.");
+    } else {
+      event.target.setCustomValidity("");
+    }
+  };
+
+  const validateCVV = (event) => {
+    const cvv = event.target.value;
+    const regex = /^\d{3}$/;
+    if (!regex.test(cvv)) {
+      event.target.setCustomValidity("CVV should be exactly 3 digits.");
+    } else {
+      event.target.setCustomValidity("");
+    }
+  };
+
   return (
       <>
         <div className="bg-secondary border-top p-4 text-white mb-3">
@@ -69,35 +124,49 @@ export default function CheckoutView({ shoppingCart, totalCost, discount }) {
                           type="text"
                           className="form-control"
                           placeholder="Name on card"
+                          required
+                          maxLength={40}
+                          minLength={3}
+                          pattern="[a-zA-Z\s]{3,40}"
+                          onInput={validateName}
                       />
                     </div>
                     <div className="col-md-6">
                       <input
-                          type="number"
+                          type="text"
                           className="form-control"
                           placeholder="Card number"
+                          required
+                          maxLength={19}
+                          pattern="\d{4}\s\d{4}\s\d{4}\s\d{4}"
+                          onInput={validateCardNumber}
                       />
                     </div>
                     <div className="col-md-4">
-                      <input
-                          type="number"
-                          className="form-control"
-                          placeholder="Expiration month"
+                      <input type="text"
+                             className="form-control"
+                             placeholder="MM" required
+                             maxLength="2"
+                             onInput={validateExpirationMonth}
                       />
+
                     </div>
                     <div className="col-md-4">
-                      <input
-                          type="number"
-                          className="form-control"
-                          placeholder="Expiration year"
+                      <input type="text"
+                             className="form-control"
+                             placeholder="YY"
+                             required maxLength="2"
+                             onInput={validateExpirationYear}
                       />
+
                     </div>
                     <div className="col-md-4">
-                      <input
-                          type="number"
-                          className="form-control"
-                          placeholder="CVV"
-                      />
+                      <input type="text"
+                             className="form-control"
+                             placeholder="CVV"
+                             required maxLength="3"
+                             onInput={validateCVV}/>
+
                     </div>
                   </div>
                 </div>
@@ -108,6 +177,9 @@ export default function CheckoutView({ shoppingCart, totalCost, discount }) {
                 </div>
               </div>
             </div>
+
+
+
             <div className="col-md-4">
               <div className="card">
                 <div className="card-header">

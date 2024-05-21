@@ -17,6 +17,42 @@ const onSubmitApplyCouponCode = async values => {
   alert(JSON.stringify(values));
 };
 
+const removeProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCount) => {
+  console.log("Remove product pushed");
+
+  // Clone the current shopping cart
+  const updatedCart = new ShoppingCart(new Map(shoppingCart.products));
+  console.log("Cloned shopping cart:", updatedCart);
+
+  // Find the product in the cart
+  const cartProduct = updatedCart.products.get(shoppingCartProduct.product._id);
+
+  if (cartProduct) {
+    // Decrement the quantity if the product is in the cart
+    cartProduct.count -= 1;
+    console.log("Decremented count for product:", cartProduct);
+
+    // If the count reaches zero, remove the product from the cart
+    if (cartProduct.count <= 0) {
+      updatedCart.products.delete(shoppingCartProduct.product._id);
+      console.log("Removed product from cart:", shoppingCartProduct.product);
+    }
+  }
+
+  // Update the shopping cart state
+  setShoppingCart(updatedCart);
+  console.log("Updated shopping cart state:", updatedCart);
+
+  // Calculate the new total count and update it
+  let totalCount = 0;
+  updatedCart.products.forEach(item => {
+    totalCount += item.count;
+  });
+  console.log("New total count: ", totalCount);
+  updateCount(totalCount);
+};
+
+
 const addProduct = (shoppingCart, shoppingCartProduct, setShoppingCart, updateCount) => {
   console.log("Add product pushed");
 

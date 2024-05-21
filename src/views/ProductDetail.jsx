@@ -1,6 +1,5 @@
 import React, { useState, useEffect, lazy } from "react";
-import { useNavigate } from "react-router";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCartPlus,
@@ -30,7 +29,7 @@ const addProduct = (shoppingCart, product, updateCount) => {
   console.log("Updated shopping cart:", shoppingCart.products);
   console.log("New count for product:", newCount);
 
-  getNewCount(shoppingCart, updateCount); // Update total count
+  getNewCount(shoppingCart, updateCount); // Update total count in the app
 }
 
 const removeProduct = (shoppingCart, product, updateCount) => {
@@ -43,7 +42,7 @@ const removeProduct = (shoppingCart, product, updateCount) => {
   console.log("Updated shopping cart:", shoppingCart.products);
   console.log("New count for product:", newCount);
 
-  getNewCount(shoppingCart, updateCount); // Update total count
+  getNewCount(shoppingCart, updateCount); // Update total count in the app
 }
 
 const getNewCount = (shoppingCart, updateCount) => {
@@ -51,7 +50,7 @@ const getNewCount = (shoppingCart, updateCount) => {
   shoppingCart.products.forEach(product => {
     totalCount += product.count;
   });
-  updateCount(totalCount);
+  updateCount(totalCount); // Use setCount to update the total count in the app
 };
 
 export default function ProductDetail({ allproducts, shoppingCart, updateCount }) {
@@ -67,11 +66,13 @@ export default function ProductDetail({ allproducts, shoppingCart, updateCount }
   }, [shoppingCart.products, filtered._id]);
 
   const handleAddProduct = () => {
-    addProduct(shoppingCart, filtered, setProductCount);
+    addProduct(shoppingCart, filtered, updateCount); // Pass updateCount to update the total count
+    setProductCount(shoppingCart.products.get(filtered._id).count);
   };
 
   const handleRemoveProduct = () => {
-    removeProduct(shoppingCart, filtered, setProductCount);
+    removeProduct(shoppingCart, filtered, updateCount); // Pass updateCount to update the total count
+    setProductCount(shoppingCart.products.get(filtered._id)?.count || 0);
   };
 
   const handleUpdate = () => {

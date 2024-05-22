@@ -63,7 +63,13 @@ const App = () => {
                     <Route path="security" element={<Security />} />
                     <Route path="epr" element={<EPRCompliance />} />
                     <Route path="500" element={<InternalServerErrorView />} />
+
+
                     <Route path="searchResult" element={<SearchResult allproducts={products} searchData={searchData} />} />
+
+
+
+
                     <Route element={<NotFoundView />} />
                 </Routes>
             </Suspense>

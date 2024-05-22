@@ -9,6 +9,7 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 
+
 import { shuffleArray } from '../utils';
 
 const CardFeaturedProduct = lazy(() =>
